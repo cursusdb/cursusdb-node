@@ -1,0 +1,27 @@
+{
+  "name": "cursusdb-node",
+  "version": "0.0.1",
+  "description": "CursusDB NodeJS client.",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alex Gaetano Padula, CursusDB",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "cursusdb-node": "^0.0.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "github.com/cursusdb/cursusdb-node"
+  },
+  "keywords": [
+    "database",
+    "client",
+    "cursusdb",
+    "nodejs",
+    "json"
+  ]
+}
