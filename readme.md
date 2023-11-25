@@ -2,7 +2,8 @@
 ```
 import cursusdb from 'cursusdb-node'
 
-cursusdb.Connect("0.0.0.0", "7681", "username", "password").then(async (cluster) => {
+// cluster host, cluster port, db user username, db user password, tls enabled
+cursusdb.Connect("0.0.0.0", "7681", "username", "password", false).then(async (cluster) => {
     const results = await cursusdb.Query("select * from users;")
 
     console.log(results)
