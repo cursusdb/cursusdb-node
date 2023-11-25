@@ -18,48 +18,89 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import net from 'net'
+import tls from 'tls'
 
-const client = new net.Socket();
+
+const cluster = new net.Socket();
+
+const secureCluster = new tls.TLSSocket() 
+
+let tlsEnabled = false
 
 /* Connect
 ** host - cluster host
 ** port - cluster port
 ** username - database user username
 ** password - database user password
+** tls bool
 */
-async function Connect(host, port, username, password) {
-    return new Promise((resolve, reject) => {
-        client.connect(port, host, function() {
-            client.write("Authentication: " + Buffer.from(username + "\\0" + password).toString('base64') +"\r\n");
+async function Connect(host, port, username, password, tls) {
+    tlsEnabled = tls;
+    if (!tls) {
+        return new Promise((resolve, reject) => {
+            cluster.connect(port, host, function() {
+                cluster.write("Authentication: " + Buffer.from(username + "\\0" + password).toString('base64') +"\r\n");
 
-            client.on('data', function (data) {
-                if (data.toString().startsWith("0")) {
-                    resolve(client)
-                } else {
-                    reject(data.toString())
-                }
+                cluster.on('data', function (data) {
+                    if (data.toString().startsWith("0")) {
+                        resolve(cluster)
+                    } else {
+                        reject(data.toString())
+                    }
+                });
+                
             });
-            
-        });
 
-    })
+        })
+    } else {
+        return new Promise((resolve, reject) => {
+            secureCluster.connect(port, host, function() {
+                secureCluster.write("Authentication: " + Buffer.from(username + "\\0" + password).toString('base64') +"\r\n");
+
+                secureCluster.on('data', function (data) {
+                    if (data.toString().startsWith("0")) {
+                        resolve(client)
+                    } else {
+                        reject(data.toString())
+                    }
+                });
+                
+            });
+
+        })
+    }
 
 
 }
 
 async function Query(queryString) {
-    return new Promise((resolve, reject) => {
-        client.write(queryString +"\r\n");
+    if (!tlsEnabled) {
+        return new Promise((resolve, reject) => {
+            cluster.write(queryString +"\r\n");
 
-        client.on('data', function (data) {
-            resolve(data.toString())
-        });
+            cluster.on('data', function (data) {
+                resolve(data.toString())
+            });
 
-    })
+        })
+    } else {
+        return new Promise((resolve, reject) => {
+            secureCluster.write(queryString +"\r\n");
+
+            secureCluster.on('data', function (data) {
+                resolve(data.toString())
+            });
+
+        })
+    }
 }
 
 async function Close() {
-    client.end()
+    if (!tlsEnabled) {
+        cluster.end()
+    } else {
+        secureCluster.end()
+    }
 }
 
 

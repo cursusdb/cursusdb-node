@@ -1,6 +1,6 @@
 {
   "name": "cursusdb-node",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CursusDB NodeJS client.",
   "main": "main.js",
   "type": "module",
@@ -9,9 +9,7 @@
   },
   "author": "Alex Gaetano Padula, CursusDB",
   "license": "GPL-3.0-or-later",
-  "dependencies": {
-    "cursusdb-node": "^0.0.1"
-  },
+  "dependencies": {},
   "devDependencies": {},
   "repository": {
     "type": "git",
