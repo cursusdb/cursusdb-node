@@ -59,7 +59,7 @@ async function Connect(host, port, username, password, tls) {
 
                 secureCluster.on('data', function (data) {
                     if (data.toString().startsWith("0")) {
-                        resolve(client)
+                        resolve(secureCluster)
                     } else {
                         reject(data.toString())
                     }
