@@ -21,12 +21,13 @@ import net from 'net'
 import tls from 'tls'
 
 
-const cluster = new net.Socket();
-
-const secureCluster = new tls.TLSSocket() 
-
-let tlsEnabled = false
-
+const cluster = {
+    tls: false,
+    socket: undefined,
+    connect: connect,
+    query: query,
+    close: close,
+}
 /* Connect
 ** host - cluster host
 ** port - cluster port
@@ -34,14 +35,14 @@ let tlsEnabled = false
 ** password - database user password
 ** tls bool
 */
-async function Connect(host, port, username, password, tls) {
-    tlsEnabled = tls;
-    if (!tls) {
+async function connect(host, port, username, password, tlsIn) {
+    cluster.tls = tlsIn
+    cluster.socket = tlsIn ? new tls.TLSSocket() : new net.Socket()
         return new Promise((resolve, reject) => {
-            cluster.connect(port, host, function() {
-                cluster.write("Authentication: " + Buffer.from(username + "\\0" + password).toString('base64') +"\r\n");
+            cluster.socket.connect(port, host, function() {
+                cluster.socket.write("Authentication: " + Buffer.from(username + "\\0" + password).toString('base64') +"\r\n");
 
-                cluster.on('data', function (data) {
+                cluster.socket.on('data', function (data) {
                     if (data.toString().startsWith("0")) {
                         resolve(cluster)
                     } else {
@@ -52,62 +53,29 @@ async function Connect(host, port, username, password, tls) {
             });
 
         })
-    } else {
-        return new Promise((resolve, reject) => {
-            secureCluster.connect(port, host, function() {
-                secureCluster.write("Authentication: " + Buffer.from(username + "\\0" + password).toString('base64') +"\r\n");
-
-                secureCluster.on('data', function (data) {
-                    if (data.toString().startsWith("0")) {
-                        resolve(secureCluster)
-                    } else {
-                        reject(data.toString())
-                    }
-                });
-                
-            });
-
-        })
-    }
+    
+    
 
 
 }
 
-async function Query(queryString) {
-    if (!tlsEnabled) {
+async function query(queryString) {
         return new Promise((resolve, reject) => {
-            cluster.write(queryString +"\r\n");
+            cluster.socket.write(queryString +"\r\n");
 
-            cluster.on('data', function (data) {
+            cluster.socket.on('data', function (data) {
                 resolve(data.toString())
             });
 
         })
-    } else {
-        return new Promise((resolve, reject) => {
-            secureCluster.write(queryString +"\r\n");
-
-            secureCluster.on('data', function (data) {
-                resolve(data.toString())
-            });
-
-        })
-    }
+    
 }
 
-async function Close() {
-    if (!tlsEnabled) {
-        cluster.end()
-    } else {
-        secureCluster.end()
-    }
+async function close() {
+        cluster.socket.end()
+    
 }
 
 
-const cursusdb = {
-    Connect,
-    Query,
-    Close,
-}
 
-export default cursusdb
+export default cluster

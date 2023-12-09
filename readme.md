@@ -1,15 +1,15 @@
 ## How to use
 ```
-import cursusdb from 'cursusdb-node'
+import { cluster } from 'cursusdb-node'
 
 // cluster host, cluster port, db user username, db user password, tls enabled
-cursusdb.Connect("0.0.0.0", "7681", "username", "password", false).then(async (cluster) => {
-    const results = await cursusdb.Query("select * from users;")
+cluster.connect("0.0.0.0", "7681", "username", "password", false).then(async (cluster) => {
+    const results = await cluster.query("select * from users;")
 
     console.log(results)
 
-    // Close whenever
-    cursusdb.Close()
+    // Always close up shop
+    cluster.close()
 
 }).catch((err) => {
     console.log(err)

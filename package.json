@@ -1,7 +1,7 @@
 {
   "name": "cursusdb-node",
-  "version": "0.0.3",
-  "description": "CursusDB NodeJS client.",
+  "version": "0.0.9",
+  "description": "CursusDB NodeJS native client.",
   "main": "main.js",
   "type": "module",
   "scripts": {
@@ -18,6 +18,11 @@
   "keywords": [
     "database",
     "client",
+    "dbms",
+    "database-system",
+    "db-client",
+    "document-database",
+    "distributed",
     "cursusdb",
     "nodejs",
     "json"
