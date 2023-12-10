@@ -1,6 +1,6 @@
 /*
 * CursusDB
-* Cluster
+* Node.JS Native Client Module
 * ******************************************************************
 * Copyright (C) 2023 CursusDB
 *

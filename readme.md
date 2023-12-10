@@ -1,3 +1,5 @@
+## CursusDB Node.JS Native Client Module
+
 ## How to use
 ```
 import { cluster } from 'cursusdb-node'
