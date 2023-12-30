@@ -1,5 +1,8 @@
 ## CursusDB Node.JS Native Client Module
 
+## npm
+https://www.npmjs.com/package/cursusdb-node
+
 ## How to use
 The Client class takes a cluster fqdn or ip, port, db user username, db user password, and whether you want TLS true or false(cluster must have tls enabled).
 
