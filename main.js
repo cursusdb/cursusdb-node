@@ -17,65 +17,51 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import net from 'net'
+import net from 'node:net'
 import tls from 'tls'
 
+// CursusDB Cluster Client class
+class Client {
+    constructor(host, port, username, password, tls) {
+            this.host = host;
+            this.port = port;
+            this.username = username;
+            this.password = password;
+            this.tls = tls;
+    }
 
-const cluster = {
-    tls: false,
-    socket: undefined,
-    connect: connect,
-    query: query,
-    close: close,
-}
-/* Connect
-** host - cluster host
-** port - cluster port
-** username - database user username
-** password - database user password
-** tls bool
-*/
-async function connect(host, port, username, password, tlsIn) {
-    cluster.tls = tlsIn
-    cluster.socket = tlsIn ? new tls.TLSSocket() : new net.Socket()
+    Connect() {
         return new Promise((resolve, reject) => {
-            cluster.socket.connect(port, host, function() {
-                cluster.socket.write("Authentication: " + Buffer.from(username + "\\0" + password).toString('base64') +"\r\n");
+        this.socket = (this.tls ? tls : net).createConnection({ host: this.host, port: this.port }, () => {
+            this.socket.write("Authentication: " + Buffer.from( this.username + "\\0" +  this.password).toString('base64') +"\r\n");
 
-                cluster.socket.on('data', function (data) {
+                this.socket.on('data', function (data) {
                     if (data.toString().startsWith("0")) {
-                        resolve(cluster)
+                        resolve("Connected to CursusDB cluster successfully.")
                     } else {
                         reject(data.toString())
                     }
                 });
-                
-            });
-
-        })
+        });
+    })
+    }
     
-    
-
-
-}
-
-async function query(queryString) {
+    Query(queryString) {
         return new Promise((resolve, reject) => {
-            cluster.socket.write(queryString +"\r\n");
+            this.socket.write(queryString +"\r\n");
 
-            cluster.socket.on('data', function (data) {
+            this.socket.on('data', function (data) {
                 resolve(data.toString())
             });
 
         })
-    
+    }
+
+    Close() {
+        this.socket.end()
+    }
+
 }
 
-async function close() {
-        cluster.socket.end()
-    
-}
 
-
-
-export default cluster
+export default Client

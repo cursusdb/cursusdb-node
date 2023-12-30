@@ -1,20 +1,24 @@
 ## CursusDB Node.JS Native Client Module
 
 ## How to use
+The Client class takes a cluster fqdn or ip, port, db user username, db user password, and whether you want TLS true or false(cluster must have tls enabled).
+
 ```
-import { cluster } from 'cursusdb-node'
+import Client from 'cursusdb-node'
 
-// cluster host, cluster port, db user username, db user password, tls enabled
-cluster.connect("0.0.0.0", "7681", "username", "password", false).then(async (cluster) => {
-    const results = await cluster.query("select * from users;")
+(async function() {
+    const client = new Client("0.0.0.0", "7681", "username", "password", false)
 
-    console.log(results)
+    client.Connect().then((res) => {
+        console.log(res)
 
-    // Always close up shop
-    cluster.close()
-
-}).catch((err) => {
-    console.log(err)
-})
+            client.Query(`ping;`).then((res) => {
+                console.log(res)
+                client.Close()
+            })
+    }).catch((err) => {
+        console.error(err)
+    })
+})()
 
 ```
