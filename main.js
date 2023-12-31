@@ -32,17 +32,32 @@ class Client {
 
     Connect() {
         return new Promise((resolve, reject) => {
-        this.socket = (this.tls ? tls : net).createConnection({ host: this.host, port: this.port }, () => {
-            this.socket.write("Authentication: " + Buffer.from( this.username + "\\0" +  this.password).toString('base64') +"\r\n");
-
-                this.socket.on('data', function (data) {
-                    if (data.toString().startsWith("0")) {
-                        resolve("Connected to CursusDB cluster successfully.")
-                    } else {
-                        reject(data.toString())
-                    }
+            if(this.tls) {
+                this.socket = tls.connect({ host: this.host, port: this.port }, () => {
+                    this.socket.write("Authentication: " + Buffer.from( this.username + "\\0" +  this.password).toString('base64') +"\r\n");
+        
+                        this.socket.on('data', function (data) {
+                            if (data.toString().startsWith("0")) {
+                                resolve("Connected to CursusDB cluster successfully.")
+                            } else {
+                                reject(data.toString())
+                            }
+                        });
                 });
-        });
+            } else {
+                this.socket = net.createConnection({ host: this.host, port: this.port }, () => {
+                    this.socket.write("Authentication: " + Buffer.from( this.username + "\\0" +  this.password).toString('base64') +"\r\n");
+        
+                        this.socket.on('data', function (data) {
+                            if (data.toString().startsWith("0")) {
+                                resolve("Connected to CursusDB cluster successfully.")
+                            } else {
+                                reject(data.toString())
+                            }
+                        });
+                });
+            }
+       
     })
     }
     
