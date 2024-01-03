@@ -1,7 +1,7 @@
 {
   "name": "cursusdb-node",
-  "version": "1.0.3",
-  "description": "CursusDB native client for Node.JS",
+  "version": "1.0.4",
+  "description": "CursusDB official native client for Node.JS",
   "main": "main.js",
   "type": "module",
   "scripts": {

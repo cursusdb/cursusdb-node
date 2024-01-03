@@ -1,4 +1,7 @@
-## CursusDB Node.JS Native Client Module
+## CursusDB Node.JS Native Client Package
+cursusdb-node is the official CursusDB Native Client package for Node.JS
+
+https://cursusdb.com
 
 ## npm
 https://www.npmjs.com/package/cursusdb-node
